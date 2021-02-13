@@ -1,18 +1,8 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.AnalogGyro;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; //Import DifferentialDrive (a way to have an arcade drive)
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase; //Import Subsystem Class (*new this year*)
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -21,40 +11,24 @@ import frc.robot.RobotContainer; //Import Timed Robot methods (from overall robo
 import frc.robot.commands.ArcadeDrive;
 
 public class DriveBase_Subsystem extends SubsystemBase {
-	DifferentialDrive CashwinsDifferentialDrive;
+	DifferentialDrive BMoneysDifferentialDrive;
 
 	SpeedControllerGroup m_leftDrive;
 	SpeedControllerGroup m_rightDrive;
 
 	Joystick XBoxController;
 
-	// The left-side drive encoder
-	private final Encoder m_leftEncoder =
-	new Encoder(Constants.kLeftEncoderPorts[0], Constants.kLeftEncoderPorts[1],
-				Constants.kLeftEncoderReversed);
-
-	// The right-side drive encoder
-	private final Encoder m_rightEncoder =
-	new Encoder(Constants.kRightEncoderPorts[0], Constants.kRightEncoderPorts[1],
-				Constants.kRightEncoderReversed);
-
-	DifferentialDriveOdometry m_odometry;
-	Gyro m_gyro;
-
 	double newDriveSpeed;
 	double actualDriveSpeed;
 	double previousDriveSpeed;
 
 	public DriveBase_Subsystem() {
-		CashwinsDifferentialDrive = RobotContainer.CashwinsDriveBase;
+		BMoneysDifferentialDrive = RobotContainer.BMoneysDriveBase;
 
 		m_leftDrive = RobotContainer.m_leftDrive;
 		m_rightDrive = RobotContainer.m_rightDrive;
 
 		XBoxController = RobotContainer.XBoxController;
-
-		m_gyro = RobotContainer.gyro;
-		m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
 
 		newDriveSpeed = 0;
 		actualDriveSpeed = 0;
@@ -65,8 +39,6 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	public void periodic() {
 		// This method will be called once per scheduler run
 		rampArcadeDrive(XBoxController);
-		m_odometry.update(m_gyro.getRotation2d(), m_leftEncoder.getDistance(),
-                      m_rightEncoder.getDistance());
 	}
 
 	public void initDefaultCommand() {
@@ -100,9 +72,9 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		*/
 
 		//want to add if statement here to have configs
-		//CashwinsDifferentialDrive.arcadeDrive(-driveValue / Constants.driveSensitivity, turnValue / Constants.turnSensitivity); //non-car drive
+		//BMoneysDifferentialDrive.arcadeDrive(-driveValue / Constants.driveSensitivity, turnValue / Constants.turnSensitivity); //non-car drive
 
-		CashwinsDifferentialDrive.curvatureDrive(-driveValue / Constants.driveSensitivity, turnValue / Constants.turnSensitivity, Constants.isQuickTurn);
+		BMoneysDifferentialDrive.curvatureDrive(-driveValue / Constants.driveSensitivity, turnValue / Constants.turnSensitivity, Constants.isQuickTurn);
 		//System.out.println("LeftTalon running at: A" + RobotContainer.m_leftDriveTalon.getSupplyCurrent());
 		//System.out.println("RightTalon running at: A" + RobotContainer.m_rightDriveTalon.getSupplyCurrent()); //IDK about victors
 	}
@@ -114,62 +86,37 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		return newSpeed;
 	} */
 
-  /*
 	public boolean orientHorizontalTurn() { //returns true if the robot is horizontally oriented, false if interrupted
         if (Robot.targetx >= Constants.marginAngleError) { //if too far to the left
-			//CashwinsDifferentialDrive.curvatureDrive(0.0, Constants.turnRate, true); //turn cntrclockwise
-			CashwinsDifferentialDrive.curvatureDrive(0.0, Robot.targetx/Constants.turnSpeed, true);
+			//BMoneysDifferentialDrive.curvatureDrive(0.0, Constants.turnRate, true); //turn cntrclockwise
+			BMoneysDifferentialDrive.curvatureDrive(0.0, Robot.targetx/Constants.turnSpeed, true);
             return false;
             
         }
         else if (Robot.targetx <= -Constants.marginAngleError) { //too far to the right
-			//CashwinsDifferentialDrive.curvatureDrive(0.0, -Constants.turnRate, true); //turn clockwise
-			CashwinsDifferentialDrive.curvatureDrive(0.0, Robot.targetx/Constants.turnSpeed, true);
+			//BMoneysDifferentialDrive.curvatureDrive(0.0, -Constants.turnRate, true); //turn clockwise
+			BMoneysDifferentialDrive.curvatureDrive(0.0, Robot.targetx/Constants.turnSpeed, true);
             return false;
         }
         else {
 
             //do this if the drive base is alligned 
-            CashwinsDifferentialDrive.curvatureDrive(-XBoxController.getRawAxis(Constants.LYStickAxisPort), 0.0, false);
-            return true;
-		    }
+            BMoneysDifferentialDrive.curvatureDrive(-XBoxController.getRawAxis(Constants.LYStickAxisPort), 0.0, false);
             
-  }
-  */
-  
+			return true;
+		}
+            
+        }
+
 	public void drivePivot(double speed) { // TODO may need to make this negative
-		CashwinsDifferentialDrive.arcadeDrive(0, speed);
+		BMoneysDifferentialDrive.arcadeDrive(0, speed);
 	}
 
 	public void driveStraight(double speed) {
-		CashwinsDifferentialDrive.arcadeDrive(speed, 0);
+		BMoneysDifferentialDrive.arcadeDrive(speed, 0);
 	}
 
 	public void stop() {
-		CashwinsDifferentialDrive.arcadeDrive(0, 0);
-	}
-
-	public Pose2d getPose() {
-		return m_odometry.getPoseMeters();
-	}
-
-	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-		return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
-	}
-
-	public void tankDriveVolts(double leftVolts, double rightVolts) {
-		m_leftDrive.setVoltage(leftVolts);
-		m_rightDrive.setVoltage(-rightVolts);
-		CashwinsDifferentialDrive.feed();
-	}
-
-	public void resetOdometry(Pose2d pose) {
-		resetEncoders();
-		m_odometry.resetPosition(pose, m_gyro.getRotation2d());
-	}
-
-	public void resetEncoders() {
-		m_leftEncoder.reset();
-		m_rightEncoder.reset();
+		BMoneysDifferentialDrive.arcadeDrive(0, 0);
 	}
 }

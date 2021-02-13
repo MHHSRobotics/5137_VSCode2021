@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
@@ -28,30 +24,35 @@ public class Storage_Subsystem extends SubsystemBase {
         pixy = RobotContainer.cartridgePixy;
     }
 
-    public void shootingStorage(boolean isShooting) {
-      if(isShooting) {
-        rstorageVictor.set(Constants.storageSpeed);
-      }
+    public void store(boolean wantsOn, boolean shooting, boolean reversed, boolean reversedMatters, boolean wantsBottomBeltReversed) {
+        
+    if (wantsOn) { //l is top, r is bottom belts
+        if(shooting) {
+            rstorageVictor.set(Constants.storageSpeed);
+        }
+        else {
+            rstorageVictor.set(0);
+        }
+        if(reversed && reversedMatters) {
+            lstorageVictor.set(-Constants.storageSpeed);
+        }
+        else if (!reversed && reversedMatters) {
+            lstorageVictor.set(Constants.storageSpeed);
+        }
+        else {
+            //don't reset the top belt
+        }
+        if (wantsBottomBeltReversed) {
+            rstorageVictor.set(-Constants.storageSpeed);
+        }
+        
+        
+    }
+    else {
+        lstorageVictor.set(0);
+        rstorageVictor.set(0);
     }
 
-    public void reverseStorage(boolean reversed, boolean reversedMatters, boolean wantsBottomBeltReversed) {
-      if (reversed && reversedMatters) {
-        lstorageVictor.set(-Constants.storageSpeed);
-      }
-      else if (!reversed && reversedMatters) {
-        lstorageVictor.set(Constants.storageSpeed);
-      }
-      else {
-        // Don't reset the top belt
-      }
-      if (wantsBottomBeltReversed) {
-        rstorageVictor.set(-Constants.storageSpeed);
-      }
-    }
-
-    public void offStorage() {
-      lstorageVictor.set(0);
-      rstorageVictor.set(0);
     }
 
     public boolean checkIfFull() {

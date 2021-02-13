@@ -1,6 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.commands;
 
@@ -26,7 +23,7 @@ public class ArcadeDrive extends CommandBase {
 		DriveBase subsystem. No other commands are here to potentially interrupt ArcadeDrive, so the
         isFinished() and end() methods are irrelevant.*/
         System.out.println("DriveBase is running...");
-        RobotContainer.driveBase_Subsystem.rampArcadeDrive(RobotContainer.XBoxController);
+        RobotContainer.driveBase_Subsystem.rampArcadeDrive(Robot.ExistingRobot.XBoxController);
 	}
 	
 	// Called when isFinished returns true (which never happens) or the command gets interrupted

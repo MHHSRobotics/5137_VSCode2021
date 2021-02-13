@@ -1,9 +1,6 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.Solenoid;
@@ -74,6 +71,27 @@ public class Intake_Subsystem extends SubsystemBase {
            
         }
     }
+
+    //All code below is outdated...
+    /*
+    public double getAmmoCount() {
+        //smartDashboard.putNumber("Title", double number);
+        refreshAmmoCount();
+        return SmartDashboard.getNumber("Ball Count", errorDefaultValue);
+    }
+
+    public void refreshAmmoCount() {
+        boolean catchError = false;
+
+        if (SmartDashboard.getBoolean("Add 1 Ball", catchError) == true) {
+            SmartDashboard.putNumber("Ball Count", (SmartDashboard.getNumber("Ball Count", errorDefaultValue) + 1.0));
+            SmartDashboard.putBoolean("Add 1 Ball", false);
+        }
+        else if (SmartDashboard.getBoolean("Subtract 1 Ball", catchError) == true) {
+            SmartDashboard.putNumber("Ball Count", (SmartDashboard.getNumber("Ball Count", errorDefaultValue) - 1.0));
+            SmartDashboard.putBoolean("Subtract 1 Ball", false);
+        }
+    } */
 
     public void endIntake() {
         intakeVictor.set(0);
