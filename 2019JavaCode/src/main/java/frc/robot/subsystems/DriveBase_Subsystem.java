@@ -3,11 +3,13 @@ package frc.robot.subsystems;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.Robot;
 import frc.robot.RobotMap;
-
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Spark;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 public class DriveBase_Subsystem extends Subsystem { /*Welcome to the DriveBase subsystem, where all the
 	driving happens It may seem a bit messy at first, but if you take a closer look at it, it actually
@@ -17,9 +19,42 @@ public class DriveBase_Subsystem extends Subsystem { /*Welcome to the DriveBase 
 	as defining some informational values that we'll be using.*/
 	Spark leftDriveMotor = RobotMap.leftDriveMotor;
 	Spark rightDriveMotor = RobotMap.rightDriveMotor;
+	Encoder leftEncoder = RobotMap.leftEncoder;
+	Encoder rightEncoder = RobotMap.rightEncoder;
+	DifferentialDriveOdometry odometry;
+	Gyro gyro = new ADXRS450_Gyro(); 
 	DifferentialDrive hotWheels = RobotMap.hotWheels;
 	private double previousDriveSpeed = 0;
 	public static double driveSpeed = 0; // for DisplayValues
+
+	public DriveBase_Subsystem() {
+		leftEncoder.setDistancePerPulse(.1173);
+    	rightEncoder.setDistancePerPulse(.1173);
+
+    	resetEncoders();
+    	m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
+	}
+
+	@Override
+  	public void periodic() {
+    // Update the odometry in the periodic block
+    	m_odometry.update(
+        gyro.getRotation2d(), leftEncoder.getDistance(), rightEncoder.getDistance());
+  	}
+
+
+	public Pose2d getPose() {
+		return m_odometry.getPoseMeters();
+	}
+
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
+	}
+
+	public void resetOdometry(Pose2d pose) {
+		resetEncoders();
+		odometry.resetPosition(pose, gyro.getRotation2d());
+	}
 
 	protected void initDefaultCommand() { /*We have a default command this time: ArcadeDrive. Arcade
 		Drive is a form of driving in which you use one analog stick to control forwards and backwards
