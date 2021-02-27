@@ -1,8 +1,17 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DigitalSource;
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; //Import DifferentialDrive (a way to have an arcade drive)
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase; //Import Subsystem Class (*new this year*)
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -15,12 +24,21 @@ public class DriveBase_Subsystem extends SubsystemBase {
 
 	SpeedControllerGroup m_leftDrive;
 	SpeedControllerGroup m_rightDrive;
+	TalonSRX rightDriveTalon = RobotContainer.m_rightDriveTalon;
 
 	Joystick XBoxController;
+
+	private final Encoder m_leftEncoder = new Encoder(
+		rightDriveTalon.getSensorCollection().
+
 
 	double newDriveSpeed;
 	double actualDriveSpeed;
 	double previousDriveSpeed;
+
+	private final DifferentialDriveOdometry m_odometry;
+
+	private final Gyro m_gyro = new ADXRS450_Gyro();
 
 	public DriveBase_Subsystem() {
 		BMoneysDifferentialDrive = RobotContainer.BMoneysDriveBase;
@@ -33,12 +51,16 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		newDriveSpeed = 0;
 		actualDriveSpeed = 0;
 		previousDriveSpeed = 0;
+
+		m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
 	}
 
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
 		rampArcadeDrive(XBoxController);
+		m_odometry.update(
+        m_gyro.getRotation2d(), m_leftEncoder.getDistance(), rightDriveTalon.getDistance()
 	}
 
 	public void initDefaultCommand() {
@@ -118,5 +140,13 @@ public class DriveBase_Subsystem extends SubsystemBase {
 
 	public void stop() {
 		BMoneysDifferentialDrive.arcadeDrive(0, 0);
+	}
+
+	public Pose2d getPose() {
+		return m_odometry.getPoseMeters();
+	}
+
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
 	}
 }
