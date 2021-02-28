@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+
 /*Class to provide place for robot-wide numerical or boolean constants.
 Declare all constants globally.
 Also, statically import the class/inner classes wherever the constants are needed, to reduce verbosity.
@@ -75,10 +77,15 @@ public final class Constants {
     public final static int rclimbCAN = 14;             //A1
 
     //---------------------------------------//
+
+    // Drive Base
     public final static double driveSensitivity = 1.0; //bigger # means less sensitivity, from 0.5 to 2.0
     //10.0: baby speed, 9.0: tdddler mode, 7.0: fast toddler mode, 5.0: optimal turn speed, 4.5:
     public final static double turnSensitivity = 3.0; //4.5 seems nice
     public final static boolean isQuickTurn = true; //makes turning the drive base able to override constant-curvature turning for turn-in-place maneuvers.
+    public static final int DriveBaseEncoderCPR = 4096;
+    public static final double DriveBaseWheelDiameterMeters = 0.125; // 5 inches in meters MAY NEED TO CHANGE
+    public static final double EncoderDistancePerPulse = (PI*DriveBaseWheelDiameterMeters) / (double) DriveBaseEncoderCPR;
     //Used for ...
 
     //Control Panel
@@ -148,4 +155,21 @@ public final class Constants {
     public final static String ShootDriveBack = "kShootDriveBack";
     public final static String JustDriveBack = "kDriveBack";
     public final static String ManShootDriveBack = "kManShootDriveBack";
+
+    // Ramsete Command
+    public static final double kTrackwidthMeters = 0.69;
+    public static final DifferentialDriveKinematics kDriveKinematics =
+    new DifferentialDriveKinematics(kTrackwidthMeters);
+
+    public static final double ksVolts = 0.22;
+    public static final double kvVoltSecondsPerMeter = 1.98;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.2;     // Use FRC-Characterization to change
+
+    public static final double kPDriveVel = 8.5;      // Also use FRC-Characterization to change
+
+    public static final double kMaxSpeedMetersPerSecond = 3;
+    public static final double kMaxAccelerationMetersPerSecondSquared = 3;    // Probably not needed since values declared in PathWeaver project
+
+    public static final double kRamseteB = 2;
+    public static final double kRamseteZeta = 0.7;    // These are good baseline values to keep.
 }

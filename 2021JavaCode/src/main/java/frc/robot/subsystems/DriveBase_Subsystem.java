@@ -20,24 +20,26 @@ import frc.robot.RobotContainer; //Import Timed Robot methods (from overall robo
 import frc.robot.commands.ArcadeDrive;
 
 public class DriveBase_Subsystem extends SubsystemBase {
+	//Differential Drive
 	DifferentialDrive BMoneysDifferentialDrive;
 
+	// Drive Motors
 	SpeedControllerGroup m_leftDrive;
 	SpeedControllerGroup m_rightDrive;
+
+	TalonSRX leftDriveTalon = RobotContainer.m_leftDriveTalon;
 	TalonSRX rightDriveTalon = RobotContainer.m_rightDriveTalon;
 
 	Joystick XBoxController;
-
-	private final Encoder m_leftEncoder = new Encoder(
-		rightDriveTalon.getSensorCollection().
-
 
 	double newDriveSpeed;
 	double actualDriveSpeed;
 	double previousDriveSpeed;
 
+	// Odometry
 	private final DifferentialDriveOdometry m_odometry;
 
+	// Gyro
 	private final Gyro m_gyro = new ADXRS450_Gyro();
 
 	public DriveBase_Subsystem() {
@@ -52,6 +54,10 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		actualDriveSpeed = 0;
 		previousDriveSpeed = 0;
 
+		leftDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
+		rightDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
+
+		resetEncoders();
 		m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
 	}
 
@@ -60,7 +66,7 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		// This method will be called once per scheduler run
 		rampArcadeDrive(XBoxController);
 		m_odometry.update(
-        m_gyro.getRotation2d(), m_leftEncoder.getDistance(), rightDriveTalon.getDistance()
+			m_gyro.getRotation2d(), leftDriveTalon.getSelectedSensorPosition(), rightDriveTalon.getSelectedSensorPosition());
 	}
 
 	public void initDefaultCommand() {
@@ -147,6 +153,47 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	}
 
 	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-		return new DifferentialDriveWheelSpeeds(m_leftEncoder.getRate(), m_rightEncoder.getRate());
+		// Selected sensor velocity return meters per 100 ms so multiply by 10/10
+		return new DifferentialDriveWheelSpeeds(leftDriveTalon.getSelectedSensorVelocity() * 10 * Constants.EncoderDistancePerPulse,   
+												rightDriveTalon.getSelectedSensorVelocity() * 10 * Constants.EncoderDistancePerPulse); 
+			
+	}
+
+	private void resetEncoders() {
+		leftDriveTalon.setSelectedSensorPosition(0);
+		rightDriveTalon.setSelectedSensorPosition(0);
+	}
+
+	public void resetOdometry(Pose2d pose) {
+		resetEncoders();
+		m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+	}
+
+	/*
+	public void arcadeDrive(double fwd, double rot) {
+		m_drive.arcadeDrive(fwd, rot);
+	}
+	*/
+
+	public void tankDriveVolts(double leftVolts, double rightVolts) {
+		m_leftDrive.setVoltage(leftVolts);
+		m_rightDrive.setVoltage(-rightVolts);
+		BMoneysDifferentialDrive.feed();
+	}
+
+	public double getAverageEncoderDistance() {
+		return (leftDriveTalon.getSelectedSensorPosition() + rightDriveTalon.getSelectedSensorPosition()) / 2.0;
+	}
+
+	public void zeroHeading() {
+		m_gyro.reset();
+	}
+
+	public double getHeading() {
+		return m_gyro.getRotation2d().getDegrees();
+	}
+
+	public double getTurnRate() {
+		return -m_gyro.getRate();
 	}
 }
