@@ -53,6 +53,7 @@ public final class Constants {
     public final static int fRightDriveVictorCAN = 4;   //A3
     public final static int bLeftDriveVictorCAN = 5;    //B4
     public final static int bRightDriveVictorCAN = 6;   //A4
+    public final static int PigeonIMUCAN = 0;
     //Control Panel
     public final static int controlPanelCAN = 7;        //C7
 
