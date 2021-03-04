@@ -1,10 +1,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
-import edu.wpi.first.wpilibj.DigitalSource;
-import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; //Import DifferentialDrive (a way to have an arcade drive)
@@ -17,6 +16,7 @@ import frc.robot.Constants;
 import frc.robot.Robot;
 //New API may not need to import dependable commands
 import frc.robot.RobotContainer; //Import Timed Robot methods (from overall robot)
+import frc.robot.myPigeonIMU;
 import frc.robot.commands.ArcadeDrive;
 
 public class DriveBase_Subsystem extends SubsystemBase {
@@ -40,7 +40,7 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	private final DifferentialDriveOdometry m_odometry;
 
 	// Gyro
-	private final Gyro m_gyro = new ADXRS450_Gyro();
+	private final myPigeonIMU m_gyro = new myPigeonIMU(Constants.PigeonIMUCAN);
 
 	public DriveBase_Subsystem() {
 		BMoneysDifferentialDrive = RobotContainer.BMoneysDriveBase;
@@ -193,7 +193,10 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		return m_gyro.getRotation2d().getDegrees();
 	}
 
+	/*
 	public double getTurnRate() {
 		return -m_gyro.getRate();
 	}
+	*/
+	
 }
