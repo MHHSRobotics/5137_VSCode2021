@@ -15,7 +15,7 @@ public class StahpTheShoot_Command extends CommandBase {
     // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-      System.out.println("Shooter Be shootin");
+      //System.out.println("Shooter Be shootin");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

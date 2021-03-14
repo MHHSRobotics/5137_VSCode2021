@@ -11,7 +11,7 @@ public class UpwardStorage_Command extends CommandBase {
 
     @Override
   public void initialize() {
-      System.out.println("Storage Overriden...");
+      //System.out.println("Storage Overriden...");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

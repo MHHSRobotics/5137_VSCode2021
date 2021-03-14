@@ -5,9 +5,11 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive; //Import DifferentialDrive (a way to have an arcade drive)
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
@@ -26,6 +28,7 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	// Drive Motors
 	SpeedControllerGroup m_leftDrive;
 	SpeedControllerGroup m_rightDrive;
+	TalonSRX PigeonTalon = new TalonSRX(7);
 
 	TalonSRX leftDriveTalon = RobotContainer.m_leftDriveTalon;
 	TalonSRX rightDriveTalon = RobotContainer.m_rightDriveTalon;
@@ -36,11 +39,11 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	double actualDriveSpeed;
 	double previousDriveSpeed;
 
-	// Odometry
-	private final DifferentialDriveOdometry m_odometry;
-
 	// Gyro
-	private final myPigeonIMU m_gyro = new myPigeonIMU(Constants.PigeonIMUCAN);
+	private final PigeonIMU m_gyro = new PigeonIMU(PigeonTalon);
+
+	// Odometry
+	private final DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(getRotation2d());
 
 	public DriveBase_Subsystem() {
 		BMoneysDifferentialDrive = RobotContainer.BMoneysDriveBase;
@@ -58,19 +61,21 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		rightDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
 
 		resetEncoders();
-		m_odometry = new DifferentialDriveOdometry(m_gyro.getRotation2d());
 	}
 
 	@Override
 	public void periodic() {
 		// This method will be called once per scheduler run
-		rampArcadeDrive(XBoxController);
+		//rampArcadeDrive(XBoxController);
+		BMoneysDifferentialDrive.feed();
+		getRotation2d();
 		m_odometry.update(
-			m_gyro.getRotation2d(), leftDriveTalon.getSelectedSensorPosition(), rightDriveTalon.getSelectedSensorPosition());
+			getRotation2d(), leftDriveTalon.getSelectedSensorPosition(), rightDriveTalon.getSelectedSensorPosition());
+		
 	}
 
 	public void initDefaultCommand() {
-		setDefaultCommand(new ArcadeDrive());
+		//setDefaultCommand(new ArcadeDrive());
 	}
 
 	public double adjustJoystickValue(double joystick, double deadZone) {
@@ -102,7 +107,7 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		//want to add if statement here to have configs
 		//BMoneysDifferentialDrive.arcadeDrive(-driveValue / Constants.driveSensitivity, turnValue / Constants.turnSensitivity); //non-car drive
 
-		BMoneysDifferentialDrive.curvatureDrive(-driveValue / Constants.driveSensitivity, turnValue / Constants.turnSensitivity, Constants.isQuickTurn);
+		//BMoneysDifferentialDrive.curvatureDrive(-driveValue / Constants.driveSensitivity, turnValue / Constants.turnSensitivity, Constants.isQuickTurn);
 		//System.out.println("LeftTalon running at: A" + RobotContainer.m_leftDriveTalon.getSupplyCurrent());
 		//System.out.println("RightTalon running at: A" + RobotContainer.m_rightDriveTalon.getSupplyCurrent()); //IDK about victors
 	}
@@ -117,19 +122,19 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	public boolean orientHorizontalTurn() { //returns true if the robot is horizontally oriented, false if interrupted
         if (Robot.targetx >= Constants.marginAngleError) { //if too far to the left
 			//BMoneysDifferentialDrive.curvatureDrive(0.0, Constants.turnRate, true); //turn cntrclockwise
-			BMoneysDifferentialDrive.curvatureDrive(0.0, Robot.targetx/Constants.turnSpeed, true);
+			//BMoneysDifferentialDrive.curvatureDrive(0.0, Robot.targetx/Constants.turnSpeed, true);
             return false;
             
         }
         else if (Robot.targetx <= -Constants.marginAngleError) { //too far to the right
 			//BMoneysDifferentialDrive.curvatureDrive(0.0, -Constants.turnRate, true); //turn clockwise
-			BMoneysDifferentialDrive.curvatureDrive(0.0, Robot.targetx/Constants.turnSpeed, true);
+			//BMoneysDifferentialDrive.curvatureDrive(0.0, Robot.targetx/Constants.turnSpeed, true);
             return false;
         }
         else {
 
             //do this if the drive base is alligned 
-            BMoneysDifferentialDrive.curvatureDrive(-XBoxController.getRawAxis(Constants.LYStickAxisPort), 0.0, false);
+            //BMoneysDifferentialDrive.curvatureDrive(-XBoxController.getRawAxis(Constants.LYStickAxisPort), 0.0, false);
             
 			return true;
 		}
@@ -137,15 +142,15 @@ public class DriveBase_Subsystem extends SubsystemBase {
         }
 
 	public void drivePivot(double speed) { // TODO may need to make this negative
-		BMoneysDifferentialDrive.arcadeDrive(0, speed);
+	//	BMoneysDifferentialDrive.arcadeDrive(0, speed);
 	}
 
 	public void driveStraight(double speed) {
-		BMoneysDifferentialDrive.arcadeDrive(speed, 0);
+	//	BMoneysDifferentialDrive.arcadeDrive(speed, 0);
 	}
 
 	public void stop() {
-		BMoneysDifferentialDrive.arcadeDrive(0, 0);
+	//	BMoneysDifferentialDrive.arcadeDrive(0, 0);
 	}
 
 	public Pose2d getPose() {
@@ -166,7 +171,7 @@ public class DriveBase_Subsystem extends SubsystemBase {
 
 	public void resetOdometry(Pose2d pose) {
 		resetEncoders();
-		m_odometry.resetPosition(pose, m_gyro.getRotation2d());
+		m_odometry.resetPosition(pose, getRotation2d());
 	}
 
 	/*
@@ -176,9 +181,18 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	*/
 
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
+		var batteryVoltage = 11.9;                             //RobotController.getBatteryVoltage();
+    	if (Math.max(Math.abs(leftVolts), Math.abs(rightVolts)) > batteryVoltage) {
+      		leftVolts *= batteryVoltage / 12.0;
+      		rightVolts *= batteryVoltage / 12.0;
+    	}
+		//leftVolts = leftVolts / Constants.scalingFactor;
+		//rightVolts = rightVolts / Constants.scalingFactor;
+		System.out.println("Tank drive volts: " + leftVolts + " : " + rightVolts);
+		//m_leftDrive.setVoltage(leftVolts);
+		//m_rightDrive.setVoltage(rightVolts);
 		m_leftDrive.setVoltage(leftVolts);
 		m_rightDrive.setVoltage(-rightVolts);
-		BMoneysDifferentialDrive.feed();
 	}
 
 	public double getAverageEncoderDistance() {
@@ -186,12 +200,23 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	}
 
 	public void zeroHeading() {
-		m_gyro.reset();
+		resetGyro();
 	}
 
 	public double getHeading() {
-		return m_gyro.getRotation2d().getDegrees();
+		return getRotation2d().getDegrees();
 	}
+
+	public Rotation2d getRotation2d() {
+        double [] ypr = new double[3];
+
+        m_gyro.getYawPitchRoll(ypr);
+		return Rotation2d.fromDegrees(ypr[0]);
+	}
+	
+	public void resetGyro() {
+        m_gyro.setYaw(0);
+    }
 
 	/*
 	public double getTurnRate() {

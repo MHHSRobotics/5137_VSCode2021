@@ -53,7 +53,7 @@ public final class Constants {
     public final static int fRightDriveVictorCAN = 4;   //A3
     public final static int bLeftDriveVictorCAN = 5;    //B4
     public final static int bRightDriveVictorCAN = 6;   //A4
-    public final static int PigeonIMUCAN = 0;
+    public final static int PigeonIMUCAN = 7;
     //Control Panel
     public final static int controlPanelCAN = 7;        //C7
 
@@ -85,7 +85,7 @@ public final class Constants {
     public final static double turnSensitivity = 3.0; //4.5 seems nice
     public final static boolean isQuickTurn = true; //makes turning the drive base able to override constant-curvature turning for turn-in-place maneuvers.
     public static final int DriveBaseEncoderCPR = 4096;
-    public static final double DriveBaseWheelDiameterMeters = 0.125; // 5 inches in meters MAY NEED TO CHANGE
+    public static final double DriveBaseWheelDiameterMeters = 0.152; // 5 inches in meters MAY NEED TO CHANGE
     public static final double EncoderDistancePerPulse = (PI*DriveBaseWheelDiameterMeters) / (double) DriveBaseEncoderCPR;
     //Used for ...
 
@@ -162,11 +162,13 @@ public final class Constants {
     public static final DifferentialDriveKinematics kDriveKinematics =
     new DifferentialDriveKinematics(kTrackwidthMeters);
 
+    public static final double scalingFactor = 300;
+
     public static final double ksVolts = 0.22;
     public static final double kvVoltSecondsPerMeter = 1.98;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.2;     // Use FRC-Characterization to change
+    public static final double kaVoltSecondsSquaredPerMeter = 0.1;     // Use FRC-Characterization to change
 
-    public static final double kPDriveVel = 8.5;      // Also use FRC-Characterization to change
+    public static final double kPDriveVel = 2.9;      // Also use FRC-Characterization to change
 
     public static final double kMaxSpeedMetersPerSecond = 3;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;    // Probably not needed since values declared in PathWeaver project

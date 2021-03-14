@@ -52,7 +52,7 @@ public class Shooter_Subsystem extends SubsystemBase {
     public void periodic() {
         
         distAway = findDistance();
-        System.out.println("Distance away is: " + distAway); 
+        //System.out.println("Distance away is: " + distAway); 
         table = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
@@ -113,8 +113,8 @@ public class Shooter_Subsystem extends SubsystemBase {
             shooterTalon.set(ControlMode.Velocity, controllerMAGVelo);
             shooterFollowerTalon.set(ControlMode.Follower, Constants.shooterCAN);
 
-            System.out.println("Shooters Running at: " + XBoxController.getRawAxis(Constants.LTAxisPort) + "%");
-            System.out.println("Velocity is reading as: " + shooterTalon.getSelectedSensorVelocity());
+            //System.out.println("Shooters Running at: " + XBoxController.getRawAxis(Constants.LTAxisPort) + "%");
+            //System.out.println("Velocity is reading as: " + shooterTalon.getSelectedSensorVelocity());
             
             //Return true if within a degree of error, or else don't
             double encoderValue = shooterTalon.getSelectedSensorVelocity();
@@ -159,8 +159,8 @@ public class Shooter_Subsystem extends SubsystemBase {
             _sb.append(targetVelocity_UnitsPer100ms); 
             */
 
-            System.out.println("Shooters Running at: " + shooterTalon.getMotorOutputPercent() + "%");
-            System.out.println("Velocity is reading as: " + shooterTalon.getSelectedSensorVelocity());
+            //System.out.println("Shooters Running at: " + shooterTalon.getMotorOutputPercent() + "%");
+            //System.out.println("Velocity is reading as: " + shooterTalon.getSelectedSensorVelocity());
 
             double encoderValue = shooterTalon.getSelectedSensorVelocity();
 
@@ -191,7 +191,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         double heightTraveledUp = Constants.towerHeight - Constants.shooterHeight; //needs changes
 
         //used to debug distance value
-        System.out.println("Distance from target is : " + distAway);
+        //System.out.println("Distance from target is : " + distAway);
         SmartDashboard.putNumber("Distance from Target", distAway);
 
         //put calculations with everything here... (thanks to Ashwin) (subject to change, since these calcs assume that the launch is from the ground)
@@ -234,7 +234,7 @@ public class Shooter_Subsystem extends SubsystemBase {
         //Only do this if robotPeriodic in robot.java changes primary value to radians
         //double targety = Math.toDegrees(Robot.targety);
         double targety = Robot.targety;
-        System.out.println("Target y is: " + targety);
+        //System.out.println("Target y is: " + targety);
         double angle = Math.toRadians(targety + Constants.limelightAngle);
         return ((Constants.towerHeight - Constants.limelightHeight) / (Math.tan(angle))) + Constants.limelightAwayShooter;
     }

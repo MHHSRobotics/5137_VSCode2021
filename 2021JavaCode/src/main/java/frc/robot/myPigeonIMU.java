@@ -4,28 +4,27 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 
 /** Add your docs here. */
 public class myPigeonIMU extends PigeonIMU {
-    PigeonIMU m_PigeonIMU;
-
-    public myPigeonIMU(int deviceNumber) {
-        super(deviceNumber);
-        m_PigeonIMU = new PigeonIMU(deviceNumber);
+    
+    public myPigeonIMU(TalonSRX talonSrx) {
+        super(talonSrx);
         // TODO Auto-generated constructor stub
     }
 
     public Rotation2d getRotation2d() {
         double [] ypr = new double[3];
 
-        m_PigeonIMU.getYawPitchRoll(ypr);
+        super.getYawPitchRoll(ypr);
         return Rotation2d.fromDegrees(-ypr[0]);
     }
 
     public void reset() {
-        m_PigeonIMU.setYaw(0);
+        super.setYaw(0);
     }
 }

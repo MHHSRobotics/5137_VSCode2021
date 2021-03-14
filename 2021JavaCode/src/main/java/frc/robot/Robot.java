@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.commandgroups.ShootDriveBack_Command;
 
 /**
@@ -75,10 +76,10 @@ public class Robot extends TimedRobot {
     System.out.println("Created RobotContainer.");
 
     //Camera setup for RIO
-    driverCam = edu.wpi.first.cameraserver.CameraServer.getInstance().startAutomaticCapture();
+    //driverCam = edu.wpi.first.cameraserver.CameraServer.getInstance().startAutomaticCapture();
 
-    driverCam.setResolution(240, 180);
-    driverCam.setFPS(30);
+    //driverCam.setResolution(240, 180);
+    //driverCam.setFPS(30);
 
     /*
      * //Possibly add inverted method for all motors (TODO need to test!!!)

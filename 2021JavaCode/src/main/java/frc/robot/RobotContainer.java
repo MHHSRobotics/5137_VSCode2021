@@ -6,9 +6,9 @@ import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -52,7 +52,6 @@ import frc.robot.commands.StopClimb_Command;
 import frc.robot.commands.StopShootStorage_Command;
 import frc.robot.commands.UpwardStorage_Command;
 import frc.robot.subsystems.Climb_Subsystem;
-import frc.robot.subsystems.ControlPanel_Subsystem;
 import frc.robot.subsystems.DriveBase_Subsystem;
 import frc.robot.subsystems.Intake_Subsystem;
 import frc.robot.subsystems.Shooter_Subsystem;
@@ -78,7 +77,6 @@ public class RobotContainer {
 
     // Subsystems (actual object name, not class names)
     public static Climb_Subsystem climb_Subsystem;
-    public static ControlPanel_Subsystem controlPanel_Subsystem;
     public static DriveBase_Subsystem driveBase_Subsystem;
     public static Intake_Subsystem intake_Subsystem;
     public static Shooter_Subsystem shooter_Subsystem;
@@ -109,7 +107,7 @@ public class RobotContainer {
     public static WPI_TalonSRX followerShooterTalon;
 
     // Control Panel
-    public static WPI_TalonSRX controlPanelTalon;
+    public static TalonSRX controlPanelTalon;
 
     // Intake
     public static WPI_VictorSPX intakeVictor;
@@ -143,7 +141,6 @@ public class RobotContainer {
     // public static DigitalInput limitSwitch;
 
     // Sensors
-    public static ColorSensorV3 colorSensor;
     public static I2C.Port i2cPort = I2C.Port.kOnboard;
     public static SPILink spiLink;
 
@@ -389,12 +386,13 @@ public class RobotContainer {
         m_rightDrive = new SpeedControllerGroup(m_rightDriveTalon, m_frontRightVic, m_backRightVic); // 4, 5, 6
 
         BMoneysDriveBase = new DifferentialDrive(m_leftDrive, m_rightDrive);
+        System.out.println("Created differential drive");
 
         // Init ControlPanel Motors
-        controlPanelTalon = new WPI_TalonSRX(Constants.controlPanelCAN);
-        controlPanelTalon.set(ControlMode.Velocity, 0);
-        controlPanelTalon.setInverted(true);
-        controlPanelTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute); // may need to
+        controlPanelTalon = new TalonSRX(Constants.controlPanelCAN);
+        //controlPanelTalon.set(ControlMode.Velocity, 0);
+        //controlPanelTalon.setInverted(true);
+        //controlPanelTalon.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute); // may need to
                                                                                                         // change
                                                                                                         // configs on
                                                                                                         // MAG Encoder
@@ -437,7 +435,6 @@ public class RobotContainer {
         climbTalon.setInverted(true);
 
         // Sensor Init
-        colorSensor = new ColorSensorV3(i2cPort);
 
         LimitSwitchUpper = new DigitalInput(Constants.LimitSwitchUpperDIOPort);
         LimitSwitchLower = new DigitalInput(Constants.LimitSwitchLowerDIOPort);
@@ -505,9 +502,9 @@ public class RobotContainer {
             .setKinematics(Constants.kDriveKinematics)
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
-
+    
     // An example trajectory to follow.  All units in meters.
-    String trajectoryJSON = "paths/YourPath.wpilib.json";
+    String trajectoryJSON = "Paths/SlalomVer2.wpilib.json";
     Trajectory trajectory = new Trajectory();
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
@@ -515,6 +512,9 @@ public class RobotContainer {
     } catch (IOException ex) {
       DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
     }
+    //trajectory.addConstraint(autoVoltageConstraint);
+
+    //BMoneysDriveBase.setSafetyEnabled(false);
 
     RamseteCommand ramseteCommand =
         new RamseteCommand(
