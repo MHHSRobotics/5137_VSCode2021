@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.MyRamseteCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
@@ -504,7 +505,7 @@ public class RobotContainer {
             .addConstraint(autoVoltageConstraint);
     
     // An example trajectory to follow.  All units in meters.
-    String trajectoryJSON = "Paths/SlalomVer2.wpilib.json";
+    String trajectoryJSON = "Paths/Slalom.wpilib.json";
     Trajectory trajectory = new Trajectory();
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
@@ -515,9 +516,10 @@ public class RobotContainer {
     //trajectory.addConstraint(autoVoltageConstraint);
 
     //BMoneysDriveBase.setSafetyEnabled(false);
+    driveBase_Subsystem.zeroHeading();
 
-    RamseteCommand ramseteCommand =
-        new RamseteCommand(
+    MyRamseteCommand ramseteCommand =
+        new MyRamseteCommand(
             trajectory,
             driveBase_Subsystem::getPose,
             new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),

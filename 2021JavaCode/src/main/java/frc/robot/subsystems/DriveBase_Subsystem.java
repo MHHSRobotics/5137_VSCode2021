@@ -68,9 +68,11 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		// This method will be called once per scheduler run
 		//rampArcadeDrive(XBoxController);
 		BMoneysDifferentialDrive.feed();
-		getRotation2d();
 		m_odometry.update(
-			getRotation2d(), leftDriveTalon.getSelectedSensorPosition(), rightDriveTalon.getSelectedSensorPosition());
+			getRotation2d(), leftDriveTalon.getSelectedSensorPosition() 
+							* Constants.EncoderDistancePerPulse, 
+							rightDriveTalon.getSelectedSensorPosition() 
+							* Constants.EncoderDistancePerPulse);
 		
 	}
 
@@ -181,16 +183,22 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	*/
 
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
-		var batteryVoltage = 11.9;                             //RobotController.getBatteryVoltage();
+		var batteryVoltage = RobotController.getBatteryVoltage();
     	if (Math.max(Math.abs(leftVolts), Math.abs(rightVolts)) > batteryVoltage) {
-      		leftVolts *= batteryVoltage / 12.0;
-      		rightVolts *= batteryVoltage / 12.0;
-    	}
+      		//leftVolts *= batteryVoltage / 12.0;
+			  //rightVolts *= batteryVoltage / 12.0;
+			leftVolts = leftVolts/12;
+			rightVolts = rightVolts/12;
+		}
+		
+		//leftVolts = Math.abs(leftVolts);
+		//rightVolts = Math.abs(rightVolts);
+		
+
 		//leftVolts = leftVolts / Constants.scalingFactor;
 		//rightVolts = rightVolts / Constants.scalingFactor;
 		System.out.println("Tank drive volts: " + leftVolts + " : " + rightVolts);
-		//m_leftDrive.setVoltage(leftVolts);
-		//m_rightDrive.setVoltage(rightVolts);
+
 		m_leftDrive.setVoltage(leftVolts);
 		m_rightDrive.setVoltage(-rightVolts);
 	}
@@ -210,7 +218,8 @@ public class DriveBase_Subsystem extends SubsystemBase {
 	public Rotation2d getRotation2d() {
         double [] ypr = new double[3];
 
-        m_gyro.getYawPitchRoll(ypr);
+		m_gyro.getYawPitchRoll(ypr);
+		//System.out.println("Yaw Values: " + ypr[0]);
 		return Rotation2d.fromDegrees(ypr[0]);
 	}
 	
@@ -218,10 +227,13 @@ public class DriveBase_Subsystem extends SubsystemBase {
         m_gyro.setYaw(0);
     }
 
-	/*
+	
 	public double getTurnRate() {
-		return -m_gyro.getRate();
+		double [] ypr = new double[3];
+
+		m_gyro.getRawGyro(ypr);
+		return ypr[0];
 	}
-	*/
+	
 	
 }
