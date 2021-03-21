@@ -460,29 +460,6 @@ public class RobotContainer {
      */
     
     public static Command getAutonomousCommand(String m_autoSelected) {
-    // An ExampleCommand will run in autonomous
-    /*
-
-    ShootDriveBack_Command shootDriveBack = new ShootDriveBack_Command();
-    DriveBack_Command driveBack_Command = new DriveBack_Command();
-    ManShootDriveBack_Command manShootDriveBack_Command = new ManShootDriveBack_Command();
-
-    //This might go here...
-    
-    switch (m_autoSelected) {
-        case (Constants.ShootDriveBack): //command to shoot 3 balls, then drive back for a half-second
-          return shootDriveBack;
-        case (Constants.JustDriveBack):
-          return driveBack_Command;
-        case (Constants.ManShootDriveBack):
-          return manShootDriveBack_Command;
-        default:
-          return manShootDriveBack_Command;
-
-    //Does the data type need to be a command? Or is this good?
-
-    } 
-    */
 
     // Create a voltage constraint to ensure we don't accelerate too fast
     var autoVoltageConstraint =
@@ -505,7 +482,7 @@ public class RobotContainer {
             .addConstraint(autoVoltageConstraint);
     
     // An example trajectory to follow.  All units in meters.
-    String trajectoryJSON = "Paths/Slalom.wpilib.json";
+    String trajectoryJSON = "Paths/BarrellPathFull.wpilib.json";
     Trajectory trajectory = new Trajectory();
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
@@ -516,7 +493,9 @@ public class RobotContainer {
     //trajectory.addConstraint(autoVoltageConstraint);
 
     //BMoneysDriveBase.setSafetyEnabled(false);
-    driveBase_Subsystem.zeroHeading();
+    //driveBase_Subsystem.resetOdometry(driveBase_Subsystem.getPose());
+    //driveBase_Subsystem.resetOdometry(trajectory.getInitialPose());
+    // Perhaps try to use PID but start at a low P value and increase until you get steady osscilations
 
     MyRamseteCommand ramseteCommand =
         new MyRamseteCommand(

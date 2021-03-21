@@ -91,7 +91,7 @@ public class MyRamseteCommand extends CommandBase {
     m_rightController = requireNonNullParam(rightController, "rightController", "RamseteCommand");
     m_output = requireNonNullParam(outputVolts, "outputVolts", "RamseteCommand");
 
-    m_usePID = false;
+    m_usePID = true;
 
     addRequirements(requirements);
   }

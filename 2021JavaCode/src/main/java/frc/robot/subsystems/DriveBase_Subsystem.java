@@ -57,8 +57,8 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		actualDriveSpeed = 0;
 		previousDriveSpeed = 0;
 
-		leftDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
-		rightDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
+		//leftDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
+		//rightDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
 
 		resetEncoders();
 	}
@@ -187,8 +187,8 @@ public class DriveBase_Subsystem extends SubsystemBase {
     	if (Math.max(Math.abs(leftVolts), Math.abs(rightVolts)) > batteryVoltage) {
       		//leftVolts *= batteryVoltage / 12.0;
 			  //rightVolts *= batteryVoltage / 12.0;
-			leftVolts = leftVolts/12;
-			rightVolts = rightVolts/12;
+			leftVolts = leftVolts/10;
+			rightVolts = rightVolts/10;
 		}
 		
 		//leftVolts = Math.abs(leftVolts);
@@ -197,7 +197,8 @@ public class DriveBase_Subsystem extends SubsystemBase {
 
 		//leftVolts = leftVolts / Constants.scalingFactor;
 		//rightVolts = rightVolts / Constants.scalingFactor;
-		System.out.println("Tank drive volts: " + leftVolts + " : " + rightVolts);
+		System.out.println("Tank drive volts: " + leftVolts + " : " + rightVolts 
+							+ " Battery: " + batteryVoltage);
 
 		m_leftDrive.setVoltage(leftVolts);
 		m_rightDrive.setVoltage(-rightVolts);
