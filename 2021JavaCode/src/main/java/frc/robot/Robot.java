@@ -191,8 +191,12 @@ public class Robot extends TimedRobot {
      * // schedule the autonomous command (example) if (m_autonomousCommand != null)
      * { m_autonomousCommand.schedule(); }
      */
-
-     m_autonomousCommand = RobotContainer.getAutonomousCommand(m_autoSelected);
+    
+     m_autoSelected = "Paths/Slalom.wpilib.json";
+     //m_autoSelected = "Paths/BarrellPathFull.wpilib.json";
+     m_autonomousCommand = RobotContainer.getAutonomousCommandWithReset(m_autoSelected);
+     
+     //m_autonomousCommand = RobotContainer.startBouncePathGroup();
 
      if (m_autonomousCommand != null) {
         m_autonomousCommand.schedule(); 

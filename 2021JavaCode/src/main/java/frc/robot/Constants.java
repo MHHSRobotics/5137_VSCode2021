@@ -168,7 +168,7 @@ public final class Constants {
     public static final double kvVoltSecondsPerMeter = 1.51;
     public static final double kaVoltSecondsSquaredPerMeter = 0.195;     // Use FRC-Characterization to change
 
-    public static final double kPDriveVel = 3.8;      // Also use FRC-Characterization to change
+    public static final double kPDriveVel = 3.4;      // Also use FRC-Characterization to change
 
     public static final double kMaxSpeedMetersPerSecond = 3;
     public static final double kMaxAccelerationMetersPerSecondSquared = 3;    // Probably not needed since values declared in PathWeaver project

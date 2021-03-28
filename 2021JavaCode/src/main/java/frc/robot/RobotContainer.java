@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.commandgroups.BouncePathGroup;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutoShoot_Command;
 import frc.robot.commands.ClimbDown_Command;
@@ -459,30 +460,10 @@ public class RobotContainer {
      * @return the command to run in autonomous
      */
     
-    public static Command getAutonomousCommand(String m_autoSelected) {
-
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    var autoVoltageConstraint =
-        new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                Constants.ksVolts,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            Constants.kDriveKinematics,
-            10);
-
-    // Create config for trajectory
-    TrajectoryConfig config =
-        new TrajectoryConfig(
-                Constants.kMaxSpeedMetersPerSecond,
-                Constants.kMaxAccelerationMetersPerSecondSquared)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(Constants.kDriveKinematics)
-            // Apply the voltage constraint
-            .addConstraint(autoVoltageConstraint);
+    public static Command getAutonomousCommandWithReset(String m_autoSelected) {
     
     // An example trajectory to follow.  All units in meters.
-    String trajectoryJSON = "Paths/BarrellPathFull.wpilib.json";
+    String trajectoryJSON = m_autoSelected;
     Trajectory trajectory = new Trajectory();
     try {
       Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
@@ -517,8 +498,54 @@ public class RobotContainer {
     // Reset odometry to the starting pose of the trajectory.
     driveBase_Subsystem.resetOdometry(trajectory.getInitialPose());
 
+    System.out.println(trajectory.getTotalTimeSeconds());
+
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> driveBase_Subsystem.tankDriveVolts(0, 0));
 
     }
+
+    public static Command getAutonomousCommand(String m_autoSelected) {
+        
+        // An example trajectory to follow.  All units in meters.
+        String trajectoryJSON = m_autoSelected;
+        Trajectory trajectory = new Trajectory();
+        try {
+          Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
+          trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+        } catch (IOException ex) {
+          DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
+        }
+    
+        MyRamseteCommand ramseteCommand =
+            new MyRamseteCommand(
+                trajectory,
+                driveBase_Subsystem::getPose,
+                new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+                new SimpleMotorFeedforward(
+                    Constants.ksVolts,
+                    Constants.kvVoltSecondsPerMeter,
+                    Constants.kaVoltSecondsSquaredPerMeter),
+                Constants.kDriveKinematics,
+                driveBase_Subsystem::getWheelSpeeds,
+                new PIDController(Constants.kPDriveVel, 0, 0),
+                new PIDController(Constants.kPDriveVel, 0, 0),
+                // RamseteCommand passes volts to the callback
+                driveBase_Subsystem::tankDriveVolts,
+                driveBase_Subsystem);
+    
+        // Reset odometry to the starting pose of the trajectory.
+        //driveBase_Subsystem.resetOdometry(trajectory.getInitialPose());
+    
+        System.out.println(trajectory.getTotalTimeSeconds());
+    
+        // Run path following command, then stop at the end.
+        return ramseteCommand.andThen(() -> driveBase_Subsystem.tankDriveVolts(0, 0));
+    
+        }
+
+        public static Command startBouncePathGroup()
+        {
+           return new BouncePathGroup();
+        }
 }

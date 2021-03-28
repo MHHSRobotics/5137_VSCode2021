@@ -57,8 +57,8 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		actualDriveSpeed = 0;
 		previousDriveSpeed = 0;
 
-		//leftDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
-		//rightDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
+		leftDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
+		rightDriveTalon.setSelectedSensorPosition(Constants.EncoderDistancePerPulse);
 
 		resetEncoders();
 	}
@@ -69,10 +69,14 @@ public class DriveBase_Subsystem extends SubsystemBase {
 		//rampArcadeDrive(XBoxController);
 		BMoneysDifferentialDrive.feed();
 		m_odometry.update(
-			getRotation2d(), leftDriveTalon.getSelectedSensorPosition() 
+			getRotation2d(), -leftDriveTalon.getSelectedSensorPosition() 
 							* Constants.EncoderDistancePerPulse, 
 							rightDriveTalon.getSelectedSensorPosition() 
 							* Constants.EncoderDistancePerPulse);
+		//System.out.println("Left position: " + -leftDriveTalon.getSelectedSensorPosition() 
+		//* Constants.EncoderDistancePerPulse);
+		//System.out.println("Right Position: " + rightDriveTalon.getSelectedSensorPosition() 
+		//* Constants.EncoderDistancePerPulse);
 		
 	}
 
@@ -161,7 +165,7 @@ public class DriveBase_Subsystem extends SubsystemBase {
 
 	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
 		// Selected sensor velocity return meters per 100 ms so multiply by 10/10
-		return new DifferentialDriveWheelSpeeds(leftDriveTalon.getSelectedSensorVelocity() * 10 * Constants.EncoderDistancePerPulse,   
+		return new DifferentialDriveWheelSpeeds(-leftDriveTalon.getSelectedSensorVelocity() * 10 * Constants.EncoderDistancePerPulse,   
 												rightDriveTalon.getSelectedSensorVelocity() * 10 * Constants.EncoderDistancePerPulse); 
 			
 	}
@@ -187,8 +191,8 @@ public class DriveBase_Subsystem extends SubsystemBase {
     	if (Math.max(Math.abs(leftVolts), Math.abs(rightVolts)) > batteryVoltage) {
       		//leftVolts *= batteryVoltage / 12.0;
 			  //rightVolts *= batteryVoltage / 12.0;
-			leftVolts = leftVolts/10;
-			rightVolts = rightVolts/10;
+			leftVolts = leftVolts/12;
+			rightVolts = rightVolts/12;
 		}
 		
 		//leftVolts = Math.abs(leftVolts);
