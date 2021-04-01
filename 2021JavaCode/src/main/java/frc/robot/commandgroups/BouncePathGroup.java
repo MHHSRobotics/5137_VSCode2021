@@ -17,8 +17,11 @@ public class BouncePathGroup extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       RobotContainer.getAutonomousCommandWithReset("Paths/Path1.wpilib.json"),
+      RobotContainer.pausePath(),
       RobotContainer.getAutonomousCommand("Paths/Path2.wpilib.json"),
+      RobotContainer.pausePath(),
       RobotContainer.getAutonomousCommand("Paths/Path3.wpilib.json"),
+      RobotContainer.pausePath(),
       RobotContainer.getAutonomousCommand("Paths/Path4.wpilib.json")
     );
   }

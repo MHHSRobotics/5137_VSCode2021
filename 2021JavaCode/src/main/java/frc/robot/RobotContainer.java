@@ -48,6 +48,7 @@ import frc.robot.commands.ManShoot_Command;
 import frc.robot.commands.OffIntake_Command;
 import frc.robot.commands.OffStorage_Command;
 import frc.robot.commands.OnIntake_Command;
+import frc.robot.commands.PausePath;
 import frc.robot.commands.ReversedOnIntake_Command;
 import frc.robot.commands.StahpTheShoot_Command;
 import frc.robot.commands.StopClimb_Command;
@@ -547,5 +548,10 @@ public class RobotContainer {
         public static Command startBouncePathGroup()
         {
            return new BouncePathGroup();
+        }
+
+        public static Command pausePath()
+        {
+            return new PausePath();
         }
 }
